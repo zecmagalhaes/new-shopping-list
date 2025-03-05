@@ -6,6 +6,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>Quicklist</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4CAF50" />
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png" />
     <link rel="stylesheet" href="index.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
@@ -18,7 +21,7 @@
         <img src="assets/icons/logo.svg" alt="Quicklist" class="logo" />
       </header>
       <nav>
-        <a href="#" class="back"><- Voltar</a>
+        <button id="btnHistorico" class="history-btn label">Histórico</button>
       </nav>
       <main>
         <div>
@@ -28,6 +31,22 @@
               type="text"
               placeholder="Adicione um novo item"
               class="new-item label"
+              id="itemName"
+            />
+            <input
+              type="number"
+              placeholder="Qtd"
+              class="item-quantity label"
+              id="itemQuantity"
+              min="1"
+            />
+            <input
+              type="number"
+              placeholder="Valor Unit."
+              class="item-price label"
+              id="itemPrice"
+              step="0.01"
+              min="0"
             />
             <button class="add-btn label">Adicionar item</button>
           </div>
@@ -40,13 +59,23 @@
             </button>
           </div>
           <ul class="list-items"></ul>
+          <div class="btn-remove-select">
+            <button id="finalizarCompra" class="finish-btn label">
+              Finalizar Compra
+            </button>
+          </div>
+          <div class="total-container">
+            <h3 class="subtitle-total">
+              Total da Compra: <span id="totalValue">R$ 0,00</span>
+            </h3>
+          </div>
         </div>
       </main>
       <div class="notification label">
         <span class="alert">
           <img
             src="assets/icons/warning-circle-filled.svg"
-            alt="Ícone de fechar"
+            alt="Ícone de alerta"
           />
         </span>
         <span id="notification-message">O item foi removido da lista!</span>
@@ -54,7 +83,42 @@
           <img src="assets/icons/delete-small.svg" alt="Ícone de fechar" />
         </button>
       </div>
+
+      <!-- Modal de Histórico -->
+      <div id="historicoModal" class="modal">
+        <div class="modal-content">
+          <h2>Histórico de Compras</h2>
+          <div id="historicoLista"></div>
+          <button class="close-modal-btn">Fechar</button>
+        </div>
+      </div>
+
+      <!-- Modal de Detalhes -->
+      <div id="detalhesModal" class="modal-detalhes">
+        <div class="modal-detalhes-content">
+          <h2>Detalhes da Compra</h2>
+          <div class="detalhes-lista"></div>
+          <button class="close-modal-btn">Fechar</button>
+        </div>
+      </div>
     </div>
     <script src="script.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log(
+                "ServiceWorker registrado com sucesso:",
+                registration.scope
+              )
+            })
+            .catch((error) => {
+              console.log("Falha ao registrar o ServiceWorker:", error)
+            })
+        })
+      }
+    </script>
   </body>
 </html>
