@@ -2,6 +2,10 @@
   font: var(--title);
 }
 
+.subtitle-total {
+  font: var(--subtitle-total) !important;
+}
+
 .label {
   font: var(--label);
 }
