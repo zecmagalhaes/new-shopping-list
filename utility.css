@@ -1,0 +1,20 @@
+.title {
+  font: var(--title);
+}
+
+.label {
+  font: var(--label);
+}
+
+.paragraph {
+  font: var(--paragraph);
+  color: var(--content-secondary);
+}
+
+.link {
+  font: var(--link);
+}
+
+.gap-8 {
+  gap: 0.5rem;
+}
