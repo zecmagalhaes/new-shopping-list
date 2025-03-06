@@ -36,9 +36,14 @@ const historicoBtn = document.querySelector("#btnHistorico")
 const historicoModal = document.querySelector("#historicoModal")
 const closeModalBtn = document.querySelector(".close-modal-btn")
 const historicoLista = document.querySelector("#historicoLista")
+const selectAllHistoricoBtn = document.querySelector("#selectAllHistorico")
+const removeSelectedHistoricoBtn = document.querySelector(
+  "#removeSelectedHistorico"
+)
 
 let items = []
 let total = 0
+let historicoItems = []
 
 // Funções auxiliares
 function formatarMoeda(valor) {
@@ -84,6 +89,7 @@ function salvarCompra() {
 
 function carregarHistorico() {
   historicoLista.innerHTML = ""
+  historicoItems = []
   const transaction = db.transaction(["compras"], "readonly")
   const objectStore = transaction.objectStore("compras")
   const request = objectStore.openCursor(null, "prev")
@@ -96,13 +102,63 @@ function carregarHistorico() {
       const div = document.createElement("div")
       div.className = "historico-item"
       div.innerHTML = `
-        <span>Compra - ${formatarMoeda(compra.total)}</span>
-        <span class="historico-data">${data}</span>
+        <label for="historico${cursor.key}">
+          <input type="checkbox" class="checkbox" id="historico${cursor.key}"/>
+          <span class="custom-checkbox"></span>
+          <span>Compra - ${formatarMoeda(compra.total)}</span>
+          <span class="historico-data">${data}</span>
+        </label>
       `
-      div.addEventListener("click", () => mostrarDetalhesCompra(compra))
+
+      const checkbox = div.querySelector(".checkbox")
+      checkbox.addEventListener("change", () => {
+        compra.checked = checkbox.checked
+        if (checkbox.checked) {
+          div.classList.add("checked")
+        } else {
+          div.classList.remove("checked")
+        }
+        atualizarTotalHistorico()
+      })
+
+      div.addEventListener("click", (e) => {
+        if (
+          !e.target.closest(".checkbox") &&
+          !e.target.closest(".custom-checkbox")
+        ) {
+          mostrarDetalhesCompra(compra)
+        }
+      })
+
+      historicoItems.push({ id: cursor.key, compra, element: div })
       historicoLista.appendChild(div)
       cursor.continue()
     }
+  }
+}
+
+function atualizarTotalHistorico() {
+  const totalHistorico = historicoItems.reduce((acc, item) => {
+    if (item.compra.checked) {
+      return acc + item.compra.total
+    }
+    return acc
+  }, 0)
+
+  const totalHistoricoElement = document.querySelector("#totalHistorico")
+  if (!totalHistoricoElement) {
+    const div = document.createElement("div")
+    div.className = "total-container"
+    div.id = "totalHistorico"
+    div.innerHTML = `
+      <h3 class="subtitle-total">Total das Compras Selecionadas: <span>${formatarMoeda(
+        totalHistorico
+      )}</span></h3>
+    `
+    historicoLista.after(div)
+  } else {
+    totalHistoricoElement.querySelector("span").textContent =
+      formatarMoeda(totalHistorico)
   }
 }
 
@@ -164,7 +220,14 @@ function mostrarNotificacao(mensagem, tipo = "erro") {
   }
 
   notification.classList.add("show")
-  setTimeout(() => {
+
+  // Limpa o timeout anterior se existir
+  if (notification.timeoutId) {
+    clearTimeout(notification.timeoutId)
+  }
+
+  // Define um novo timeout
+  notification.timeoutId = setTimeout(() => {
     notification.classList.remove("show")
     notification.style.display = "none"
   }, 3000)
@@ -258,6 +321,7 @@ window.addEventListener("click", (event) => {
     historicoModal.style.display = "none"
   }
 })
+
 // Seleção múltipla
 const selectAllBtn = document.querySelector("#selectall")
 const removeSelectedBtn = document.querySelector("#removeallselect")
@@ -302,6 +366,70 @@ removeSelectedBtn.addEventListener("click", () => {
     )
   } else if (removedCount === 1) {
     mostrarNotificacao("O item foi removido da lista!", "sucesso")
+  }
+})
+
+// Event Listeners para o histórico
+selectAllHistoricoBtn.addEventListener("click", () => {
+  const checkboxes = document.querySelectorAll("#historicoLista .checkbox")
+  const isAllChecked = historicoItems.every((item) => item.compra.checked)
+
+  checkboxes.forEach((checkbox) => {
+    const historicoItem = historicoItems.find((item) =>
+      item.element.contains(checkbox)
+    )
+    if (historicoItem) {
+      checkbox.checked = !isAllChecked
+      historicoItem.compra.checked = !isAllChecked
+      if (!isAllChecked) {
+        historicoItem.element.classList.add("checked")
+      } else {
+        historicoItem.element.classList.remove("checked")
+      }
+    }
+  })
+
+  // Atualiza o total após selecionar/desselecionar todas as listas
+  atualizarTotalHistorico()
+})
+
+removeSelectedHistoricoBtn.addEventListener("click", () => {
+  const selectedItems = historicoItems.filter((item) => item.compra.checked)
+
+  if (selectedItems.length === 0) {
+    mostrarNotificacao(
+      "Nenhuma lista selecionada, selecione uma lista para remover",
+      "aviso"
+    )
+    return
+  }
+
+  const transaction = db.transaction(["compras"], "readwrite")
+  const objectStore = transaction.objectStore("compras")
+
+  selectedItems.forEach((item) => {
+    objectStore.delete(item.id)
+  })
+
+  transaction.oncomplete = () => {
+    selectedItems.forEach((item) => {
+      item.element.remove()
+    })
+    historicoItems = historicoItems.filter(
+      (item) => !selectedItems.includes(item)
+    )
+
+    // Atualiza o totalizador após remover as listas
+    atualizarTotalHistorico()
+
+    if (selectedItems.length > 1) {
+      mostrarNotificacao(
+        "Listas selecionadas removidas com sucesso!",
+        "sucesso"
+      )
+    } else {
+      mostrarNotificacao("Lista removida com sucesso!", "sucesso")
+    }
   }
 })
 

@@ -2,17 +2,25 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background-color: var(--background-primary);
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .container {
   max-width: 50rem;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   margin: 0 auto;
   padding: 1.25rem;
+  padding-top: calc(1.25rem + env(safe-area-inset-top));
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
 
 header {
@@ -121,7 +129,10 @@ li > label {
   color: var(--always-white);
   box-shadow: 0 0 5px var(--color-brand);
   display: none;
-  margin: 1rem auto;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   align-items: center;
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
@@ -129,6 +140,22 @@ li > label {
   width: 100%;
   z-index: 9999;
   gap: 0.625rem;
+}
+
+.notification.show {
+  display: flex;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
 }
 
 .notification span:nth-child(2) {
@@ -362,6 +389,27 @@ input[type="checkbox"]:checked + .custom-checkbox {
 
 #historicoLista {
   margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+#totalHistorico {
+  margin-top: 1.25rem;
+  text-align: right;
+  padding: 0.625rem;
+  background-color: var(--background-secondary);
+  border-radius: 0.75rem;
+  box-shadow: 0 0 2px var(--border-primary);
+  color: var(--content-primary);
+}
+
+#totalHistorico h3 {
+  color: var(--content-primary);
+  font: var(--title);
+}
+
+#totalHistorico span {
+  color: var(--color-brand);
+  font-weight: bold;
 }
 
 .historico-item {
@@ -373,6 +421,40 @@ input[type="checkbox"]:checked + .custom-checkbox {
   align-items: center;
   font: var(--paragraph);
   color: var(--content-primary);
+}
+
+.historico-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  cursor: pointer;
+}
+
+.historico-item.checked {
+  background-color: var(--background-primary);
+}
+
+.historico-item .checkbox {
+  display: none;
+}
+
+.historico-item .custom-checkbox {
+  display: inline-block;
+  object-fit: cover;
+  margin-right: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("./assets/icons/check-box-initial.svg");
+  cursor: pointer;
+}
+
+.historico-item .custom-checkbox:hover {
+  background-image: url("./assets/icons/check-box-hover.svg");
+}
+
+.historico-item .checkbox:checked + .custom-checkbox {
+  background-image: url("./assets/icons/check-box-checked.svg");
 }
 
 .historico-item:hover {
