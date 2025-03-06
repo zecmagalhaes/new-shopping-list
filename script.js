@@ -234,6 +234,11 @@ function mostrarNotificacao(mensagem, tipo = "erro") {
 }
 
 // Event Listeners
+input.addEventListener("input", (e) => {
+  // Converte o texto para maiúsculo enquanto digita
+  e.target.value = e.target.value.toUpperCase()
+})
+
 addBtn.addEventListener("click", () => {
   const text = input.value.trim()
   const quantity = parseInt(quantityInput.value) || 1
@@ -289,9 +294,12 @@ addBtn.addEventListener("click", () => {
 
     ul.appendChild(li)
     input.value = ""
-    quantityInput.value = "1"
+    quantityInput.value = ""
     priceInput.value = ""
     atualizarTotal()
+
+    // Retorna o foco para o campo de nome do item
+    input.focus()
   }
 })
 
