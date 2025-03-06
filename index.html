@@ -2,13 +2,46 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Quick List" />
+    <meta name="theme-color" content="#1A1A1A" />
+    <meta name="description" content="Quick List - Sua lista de compras" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-orientations" content="portrait" />
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Ícones para iOS -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/icons/apple-touch-icon.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="assets/icons/apple-touch-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="assets/icons/apple-touch-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="167x167"
+      href="assets/icons/apple-touch-icon-167x167.png"
+    />
+    <link rel="apple-touch-startup-image" href="assets/icons/splash.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>Quicklist</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#4CAF50" />
-    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png" />
     <link rel="stylesheet" href="index.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
@@ -88,6 +121,14 @@
       <div id="historicoModal" class="modal">
         <div class="modal-content">
           <h2>Histórico de Compras</h2>
+          <div class="btn-remove-select">
+            <button id="selectAllHistorico" class="select-btn label">
+              Selecionar Todos
+            </button>
+            <button id="removeSelectedHistorico" class="select-btn label">
+              Remover Selecionados
+            </button>
+          </div>
           <div id="historicoLista"></div>
           <button class="close-modal-btn">Fechar</button>
         </div>
